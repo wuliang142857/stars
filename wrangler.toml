@@ -1,0 +1,16 @@
+# ABOUTME: Wrangler configuration for the stars account management API.
+# ABOUTME: Defines D1 database binding and Worker settings.
+
+name = "stars"
+main = "src/index.js"
+compatibility_date = "2024-12-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "stars-db"
+database_id = "77267a2c-0433-49dc-8d91-4b2e9de8b4a8"
+
+# 2026-04-14: Bind custom domain for the API
+[[routes]]
+pattern = "stars.vibelab.uk"
+custom_domain = true
