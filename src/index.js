@@ -60,7 +60,7 @@ async function handleGetAccounts(request, env) {
 
   try {
     const { results } = await env.DB.prepare(
-      "SELECT account_id, email, api_key FROM accounts WHERE type = ?"
+      "SELECT account_id, email, password, api_key FROM accounts WHERE type = ?"
     )
       .bind(type)
       .all();
@@ -73,7 +73,7 @@ async function handleGetAccounts(request, env) {
 
 /**
  * 2026-04-14: Handle POST /api/accounts to add new account credentials
- * Expects JSON body: { type, account_id, email, api_key }
+ * Expects JSON body: { type, account_id, email, password?, api_key }
  * Also supports batch creation with an array of accounts.
  */
 async function handleCreateAccount(request, env) {
@@ -101,11 +101,12 @@ async function handleCreateAccount(request, env) {
   }
 
   try {
+    // 2026-04-14: Include optional password field in insert
     const stmt = env.DB.prepare(
-      "INSERT INTO accounts (type, account_id, email, api_key) VALUES (?, ?, ?, ?)"
+      "INSERT INTO accounts (type, account_id, email, password, api_key) VALUES (?, ?, ?, ?, ?)"
     );
     const batch = items.map((item) =>
-      stmt.bind(item.type, item.account_id, item.email, item.api_key)
+      stmt.bind(item.type, item.account_id, item.email, item.password || "", item.api_key)
     );
     await env.DB.batch(batch);
 
